@@ -1,30 +1,42 @@
-import SearchFormWrapper from "../../assets/wrappers/SearchForm.js";
-import CocktailListWrapper from "../../assets/wrappers/CocktailList.js";
-import CocktailCardWrapper from "../../assets/wrappers/CocktailCard.js";
+import { useLoaderData } from "react-router-dom";
+import axios from "axios";
+import SearchForm from "../components/SearchForm.jsx";
+import CocktailList from "../components/CocktailList.jsx";
+import { useQuery } from "@tanstack/react-query";
+
+const searchCocktailsQuery = (searchTerm) => {
+  return {
+    queryKey: ["search", searchTerm || "all"],
+    queryFn: async () => {
+      const response = await axios.get(
+        `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${searchTerm}`
+      );
+      return response?.data?.drinks;
+    },
+  };
+};
+
+export const homeLoader = (queryClient) => async ({ request }) => {
+  const url = new URL(request.url);
+  const searchTerm = url.searchParams.get("search") || "all";
+  await queryClient.ensureQueryData(searchCocktailsQuery(searchTerm));
+  return { searchTerm };
+};
 
 const Home = () => {
+  const { searchTerm } = useLoaderData();
+  const { data: drinks, isPending: isLoading } = useQuery(
+    searchCocktailsQuery(searchTerm)
+  );
+
   return (
-    <main className="page">
-      <SearchFormWrapper>
-        <form className="form">
-          <input type="text" className="form-input" />
-          <button type="submit" className="btn">
-            search
-          </button>
-        </form>
-      </SearchFormWrapper>
-      <CocktailListWrapper>
-        <CocktailCardWrapper>
-          <div className="footer">
-            <h4>GG</h4>
-            <h5>Collins Glass</h5>
-            <p>Optional Alcohol</p>
-            <button className="btn" type="button">
-              details
-            </button>
-          </div>
-        </CocktailCardWrapper>
-      </CocktailListWrapper>
+    <main>
+      <SearchForm searchTerm={searchTerm} />
+      {isLoading ? (
+        <div className="loading" style={{width: "50px", height: "50px"}}></div>
+      ) : (
+        <CocktailList drinks={drinks} />
+      )}
     </main>
   );
 };

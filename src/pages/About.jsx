@@ -2,7 +2,7 @@ import AboutPage from "../assets/wrappers/AboutPage.js";
 
 const About = () => {
   return (
-    <main className="page">
+    <main>
       <AboutPage>
         <h2>About Us</h2>
         <p>

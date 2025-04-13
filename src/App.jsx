@@ -1,50 +1,17 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Cocktail from "./pages/Cocktail";
-import Landing from "./pages/Landing";
-import NewsLetter from "./pages/NewsLetter";
-import About from "./pages/About";
-import AppLayout from "./pages/home/AppLayout";
-import Home from "./pages/home/Home";
-import Error from "./pages/Error";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "/about",
-        element: <About />,
-      },
-      {
-        path: "/cocktail",
-        element: <Cocktail />,
-      },
-      {
-        path: "/newsletter",
-        element: <NewsLetter />,
-      },
-      {
-        path: "*",
-        element: <Error />,
-      },
-    ],
-  },
-  {
-    path: "/landing",
-    element: <Landing />,
-  },
-]);
+import { RouterProvider } from "react-router-dom";
+import { queryClient, router } from "./router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const App = () => {
   return (
     <>
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient} >
+        <ReactQueryDevtools initialIsOpen={false} />
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </>
   );
 };
+
 export default App;

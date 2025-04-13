@@ -1,26 +1,16 @@
-import { Link, Outlet } from "react-router-dom";
-import Navbar from "../../assets/wrappers/Navbar.js";
+import { Outlet, useNavigation } from "react-router-dom";
+import Navbar from "../components/Navbar.jsx";
 
 const AppLayout = () => {
+  const navigation = useNavigation();
+  const isPageLoading = navigation.state === "loading";
+
   return (
     <main>
-      <Navbar>
-        <div className="nav-center">
-          <div className="logo">MixMaster</div>
-          <div className="nav-links">
-            <Link className="nav-link" to={"/"}>
-              Home
-            </Link>
-            <Link className="nav-link" to={"/about"}>
-              About
-            </Link>
-            <Link className="nav-link" to={"/newsletter"}>
-              Newsletter
-            </Link>
-          </div>
-        </div>
-      </Navbar>
-      <Outlet />
+      <Navbar />
+      <section className="page">
+        {isPageLoading ? <div style={{width: "100%"}}><div className="loading" style={{margin: "0 auto"}}></div></div> : <Outlet />}
+      </section>
     </main>
   );
 };
